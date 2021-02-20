@@ -1,8 +1,34 @@
+import csv
+import json
+import logging
 import re
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def find_term(pattern, string, flags=0):
     """Returns a clean term based on the pattern received."""
+    
+    return re.findall(pattern, string, flags=flags)
 
-    term = re.findall(pattern, string, flags=flags)
 
-    return term
+def log_items(items):
+    """Log the items."""
+    for item in items:
+        logger.info('Item %d: %s', (items.index(item) + 1),  item)
+
+def save_as_json(file_name, items):
+    """Save items as json file."""
+    logger.info('Saving items as json.')
+    with open(file_name, 'w') as items_json:
+        json.dump(items, items_json, indent=4)
+
+def save_as_csv(file_name, items, fieldnames):
+    """Save items as csv."""
+    logger.info('Saving items as csv.')
+
+    with open(file_name, 'w') as items_csv:
+        writer = csv.DictWriter(items_csv, fieldnames)
+        writer.writeheader()
+        for item in items:
+            writer.writerow(item)
