@@ -1,12 +1,12 @@
 VULTR_URL = "https://www.vultr.com/products/cloud-compute/#pricing"
 
-itens_base = "./div[{}]/span/text()".format
+itens_base = "./div[{}]/span/strong/text()".format
 VULTR_XPATHS = {
     'table': "//div[contains(@class, 'js-body')]",
-    'row': "./div//div[contains(@class, 'row-content')]",
-    'storage': "./div[2]/span/strong/text()",
+    'rows': "./div//div[contains(@class, 'row-content')]",
+    'storage': itens_base(2),
     'cpu': itens_base(3),
-    'memory': "./div[4]/strong",
+    'memory': "./div[4]/strong/text()",
     'bandwith': itens_base(5),
-    'price': itens_base(6)
+    'price': "./div[6]/span//text()"
 }
