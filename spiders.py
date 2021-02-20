@@ -1,12 +1,10 @@
 import requests
 from lxml import html
 
-import csv
-import json
 import logging
 
-from constants import VULTR_URL, VULTR_XPATHS
-from utils import find_term
+from constants import VULTR_URL, VULTR_XPATHS, DIGITAL_URL, DIGITAL_XPATHS
+from utils import find_term, log_items, save_as_json, save_as_csv
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,31 +41,50 @@ class VultrSpider:
             self.items.append(items)
 
     def log_items(self):
-        """Log the items."""
-        for item in self.items:
-            logger.info('Item %d: %s', (self.items.index(item) + 1),  item)
+        log_items(self.items)
 
     def save_as_json(self):
-        """Save items as json file."""
-        logger.info('Saving items as json.')
-
-        with open('items.json', 'w') as items_json:
-            json.dump(self.items, items_json, indent=4)
+       save_as_json('vults_items.json', self.items)
 
     def save_as_csv(self):
-        """Save items as csv."""
-        logger.info('Saving items as csv.')
+        fieldnames = ['storage', 'cpu', 'memory', 'bandwith', 'price']
+        save_as_csv('vultr_items.csv', self.items, fieldnames)
 
-        with open('items.csv', 'w') as items_csv:
-            fieldnames = ['storage', 'cpu', 'memory', 'bandwith', 'price']
-            writer = csv.DictWriter(items_csv, fieldnames)
-            writer.writeheader()
-            for item in self.items:
-                writer.writerow(item)
+class DigitalOceanSpider:
+    def __init__(self):
+        self.html = html
+        self.items = []
+
+    def start_request(self):
+        """Starts the request page."""
+        logger.info('Starting digital ocean spider request')
+
+        request = requests.get(DIGITAL_URL)
+        self.html = html.fromstring(request.content)
 
 
-if __name__ == '__main__':
-    vultr = VultrSpider()
-    vultr.start_request()
-    vultr.get_items()
+    def get_items(self):
+        """Gets the page items."""
+        table = self.html.xpath(DIGITAL_XPATHS['table'])[0]
+        rows = table.xpath(DIGITAL_XPATHS['rows'])
 
+        for row in rows:
+            items = {
+                'memory': row.xpath(DIGITAL_XPATHS['memory'])[0],
+                'vCPUs': row.xpath(DIGITAL_XPATHS['cpu'])[0],
+                'transfer': row.xpath(DIGITAL_XPATHS['transfer'])[0],
+                'disk': row.xpath(DIGITAL_XPATHS['disk'])[0],
+                'hour_price': row.xpath(DIGITAL_XPATHS['hour_price'])[0],
+                'month_price': row.xpath(DIGITAL_XPATHS['month_price'])[0],
+            }
+            self.items.append(items)
+
+    def log_items(self):
+        log_items(self.items)
+
+    def save_as_json(self):
+        save_as_json('digital_items.json', self.items)
+
+    def save_as_csv(self):
+        fieldnames = ['memory', 'vCPUs', 'transfer', 'disk', 'hour_price', 'month_price']
+        save_as_csv('digital_items.csv', self.items, fieldnames)
