@@ -23,14 +23,16 @@ class VultrSpider:
         self.items = []
 
     def start_request(self):
-        """Starts the request page."""
+        """Starts the request page.
+        """
         logger.info('Starting vultr spider request')
 
         request = requests.get(VULTR_URL)
         self.html = html.fromstring(request.content)
 
     def get_items(self):
-        """Gets the page items."""
+        """Gets the page items.
+        """
         table = self.html.xpath(VULTR_XPATHS['table'])[0]
         rows = table.xpath(VULTR_XPATHS['rows'])
 
@@ -64,14 +66,16 @@ class DigitalOceanSpider:
         self.items = []
 
     def start_request(self):
-        """Starts the request page."""
+        """Starts the request page.
+        """
         logger.info('Starting digital ocean spider request')
 
         request = requests.get(DIGITAL_URL)
         self.html = html.fromstring(request.content)
 
     def get_items(self):
-        """Gets the page items."""
+        """Gets the page items.
+        """
         table = self.html.xpath(DIGITAL_XPATHS['table'])[0]
         rows = table.xpath(DIGITAL_XPATHS['rows'])
 
