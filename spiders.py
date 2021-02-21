@@ -1,10 +1,17 @@
-import requests
 from lxml import html
+import requests
 
 import logging
 
-from constants import VULTR_URL, VULTR_XPATHS, DIGITAL_URL, DIGITAL_XPATHS
-from utils import find_term, log_items, save_as_json, save_as_csv
+from constants import (DIGITAL_URL,
+                       DIGITAL_XPATHS,
+                       VULTR_URL,
+                       VULTR_XPATHS)
+
+from utils import (find_term,
+                   log_items,
+                   save_as_json,
+                   save_as_csv)
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -44,11 +51,12 @@ class VultrSpider:
         log_items(self.items)
 
     def save_as_json(self):
-       save_as_json('vults_items.json', self.items)
+        save_as_json('vults_items.json', self.items)
 
     def save_as_csv(self):
         fieldnames = ['storage', 'cpu', 'memory', 'bandwith', 'price']
         save_as_csv('vultr_items.csv', self.items, fieldnames)
+
 
 class DigitalOceanSpider:
     def __init__(self):
@@ -61,7 +69,6 @@ class DigitalOceanSpider:
 
         request = requests.get(DIGITAL_URL)
         self.html = html.fromstring(request.content)
-
 
     def get_items(self):
         """Gets the page items."""
@@ -86,5 +93,6 @@ class DigitalOceanSpider:
         save_as_json('digital_items.json', self.items)
 
     def save_as_csv(self):
-        fieldnames = ['memory', 'vCPUs', 'transfer', 'disk', 'hour_price', 'month_price']
+        fieldnames = ['memory', 'vCPUs', 'transfer',
+                      'disk', 'hour_price', 'month_price']
         save_as_csv('digital_items.csv', self.items, fieldnames)

@@ -5,11 +5,11 @@ from spiders import DigitalOceanSpider, VultrSpider
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class Runspiders:
     def __init__(self):
         self.vultr = VultrSpider()
         self.digital = DigitalOceanSpider()
-      
 
     def first_step(self, spider, step):
         logger.info("Executing %d step to %s", step, spider.__class__.__name__)
@@ -34,7 +34,7 @@ class Runspiders:
         self.run_steps(self.digital)
         self.run_steps(self.vultr)
 
+
 if __name__ == '__main__':
     run_spider = Runspiders()
     run_spider.run_spiders()
-
